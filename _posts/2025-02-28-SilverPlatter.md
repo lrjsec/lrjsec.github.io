@@ -13,7 +13,7 @@ image:
 
 [![Tryhackme Room Link](room_card.webp){: width="300" height="300" .shadow}](https://tryhackme.com/r/room/silverplatter){: .center }
 
-## Initial Enumeration
+## Enumeration
 
 ### Nmap/Rust Scan
 
@@ -82,4 +82,36 @@ Checking `http://10.10.191.243/`, we find a static site.
 
 I interact with the entire page and a find something interesting
 
-(IMG)
+![ID Contact](idcontact.png){: width="1200" height="600"}
+
+We find some information disclosure, something called `Silverpeas` and a username `scr1ptkiddy`
+Let's find out what `Silverpeas` is using the almighty google search!
+
+To-Do:
+
+- Enumerate Silverpeas
+- Username Enumeration: `scr1ptkiddy`
+
+Upon finding their web page it looks like it's a web app. Now the question is. . . 
+How do we access this application? 
+
+From our rustscan we found it has an open port on 8080 but if we go to http://IP:8080 we see there is nothing there. . Hmmm. . . 
+There must be a way to access the web app through a path but if you do dirsearch you'll find nothing again..
+
+Let's look around https://www.silverpeas.org/ to see if we can find anything.
+
+![Silver App](silverhowto.png){: width="1200" height="600"}
+
+I notice a button right away that says "Find out how to install and configure" Let's follow that!
+
+Looking through the page, this link immediately caught my attention.
+
+![Silver URL](silverurl.png){: width="1200" height="600"}
+
+Aha! The demo took us to their login page and it reveals the path needed to access the application!
+
+![Silver Path](silverpath.png){: width="1200" height="600"}
+
+`http://IP:8080/silverpeas/defaultLogin.jsp`
+
+![IP login](silverpath.png){: width="1200" height="600"}
