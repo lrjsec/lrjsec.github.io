@@ -95,8 +95,8 @@ To-Do:
 Upon finding their web page it looks like it's a web app. Now the question is. . . 
 How do we access this application? 
 
-From our rustscan we found it has an open port on 8080 but if we go to http://IP:8080 we see there is nothing there. . Hmmm. . . 
-There must be a way to access the web app through a path but if you do dirsearch you'll find nothing again..
+From our rustscan we found it has an open port on 8080 but if we go to http://IP:8080 we see there is nothing there. 
+Hmmm. . . There must be a way to access the web app through a path but if you do dirsearch you'll find nothing again. .
 
 Let's look around https://www.silverpeas.org/ to see if we can find anything.
 
@@ -114,4 +114,4 @@ Aha! The demo took us to their login page and it reveals the path needed to acce
 
 `http://IP:8080/silverpeas/defaultLogin.jsp`
 
-![IP login](silverpath.png){: width="1200" height="600"}
+![IP login](silverurl2.png){: width="1200" height="600"}
