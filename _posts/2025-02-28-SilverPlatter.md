@@ -78,7 +78,7 @@ Great!, I put that to the side and continue on. . .
 
 Checking `http://10.10.191.243/`, we find a static site.
 
-![Web 80 Index](web_80_index.webp){: width="1200" height="600"}
+![Web 80 Index](web_80_index.png){: width="1200" height="600"}
 
 I interact with the entire page and a find something interesting
 
