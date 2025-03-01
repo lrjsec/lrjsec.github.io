@@ -10,7 +10,7 @@ image:
 
 **Silver Platter** is a cool room for exploring web app pentesting using techniques like custom wordlist using cewl to gain access to **Silverpeas**. By then exploiting a vulnerability that allows an authenticated user to read others messages we end up finding **SSH** credentials in one of them.
 
-[![Tryhackme Room Link](room_card.webp){: width="300" height="300" .shadow}](https://tryhackme.com/r/room/silverplatter){: .center }
+(room  card)
 
 ## Initial Enumeration
 
@@ -77,21 +77,8 @@ Great!, I put that to the side and continue on. . .
 
 Checking `http://10.10.191.243/`, we find a static site.
 
-![Web 80 Index](web_80_index.png){: width="1200" height="600"}
+(IMG)
 
 I interact with the entire page and a find something interesting
 
-![id contact](idcontact.png){: width="1200" height="600"}
-
-
-
-<style>
-.center img {        
-  display:block;
-  margin-left:auto;
-  margin-right:auto;
-}
-.wrap pre{
-    white-space: pre-wrap;
-}
-</style>
+(IMG)
