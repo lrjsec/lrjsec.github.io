@@ -4,8 +4,9 @@ author: lrjsec
 categories: [TryHackMe]
 tags: [web, brute-force, caido, idor, ssh, ]
 render_with_liquid: false
+media_subpath: assets/ctf/thm/silverplatter
 image:
-  path: https://tryhackme-images.s3.amazonaws.com/room-icons/5f9c7574e201fe31dad228fc-1718362240227
+  path: room_image.webp
 ---
 
 **Silver Platter** is a cool room for exploring web app pentesting using techniques like custom wordlist using cewl to gain access to **Silverpeas**. By then exploiting a vulnerability that allows an authenticated user to read others messages we end up finding **SSH** credentials in one of them.
