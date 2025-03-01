@@ -4,7 +4,7 @@ author: lrjsec
 categories: [TryHackMe]
 tags: [web, brute-force, caido, idor, ssh, ]
 render_with_liquid: false
-media_subpath: images/thm_silver_platter
+media_subpath: /images/thm_silver_platter/
 image:
   path: room_image.webp
 ---
