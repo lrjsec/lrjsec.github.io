@@ -11,7 +11,7 @@ image:
 
 **Silver Platter** is a cool room for exploring web app pentesting using techniques like custom wordlist using cewl to gain access to **Silverpeas**. By then exploiting a vulnerability that allows an authenticated user to read others messages we end up finding **SSH** credentials in one of them.
 
-{: .center}
+{: center}
 [![Tryhackme Room Link](room_card.webp){: width="300" height="300" .shadow}](https://tryhackme.com/r/room/silverplatter)
 
 ## Enumeration
@@ -96,6 +96,8 @@ To-Do:
 Upon finding their web page it looks like it's a web app. Now the question is. . . 
 How do we access this application? 
 
+### Web 8080
+
 From our rustscan we found it has an open port on 8080 but if we go to http://IP:8080 we see there is nothing there. 
 Hmmm. . . There must be a way to access the web app through a path but if you do dirsearch you'll find nothing again. .
 
@@ -113,9 +115,11 @@ Aha! The demo took us to their login page and it reveals the path needed to acce
 
 ![Silver Path](silverpath.png){: width="1200" height="600"}
 
-`http://IP:8080/silverpeas/defaultLogin.jsp`
+> `http://IP:8080/silverpeas/defaultLogin.jsp`
 
 ![IP login](silverurl2.png){: width="1200" height="600"}
+
+### Brute Force
 
 Now at this point I will say that I was scratching my head, brute forcing with any password file will be futile.
 It was stated at the beginning that their password policy requires passwords that have NOT been breached.
@@ -127,7 +131,7 @@ After some time I thought, maybe theres another hint somewhere in the descriptio
 Kali comes with a built in tool called cewl which stands for custom word list generator. Here is the description taken from kali's website
 
 {: .note}
-CeWL (Custom Word List generator) is a ruby app which spiders a given URL, up to a specified depth, and returns a list of words which can then be used for password crackers such as John the Ripper. Optionally, CeWL can follow external links.
+> CeWL (Custom Word List generator) is a ruby app which spiders a given URL, up to a specified depth, and returns a list of words which can then be used for password crackers such as John the Ripper. Optionally, CeWL can follow external links.
 
 Now that's cool! (no pun intended lol)
 Let's output the contents to a .txt file and try brute forcing with it!
@@ -158,4 +162,38 @@ And. . . **SUCCESS** we have authentication!
 
 > scr1ptkiddy:adipiscing
 
-test
+### Silverpeas
+
+Let's go ahead and login. .
+
+![DashB](silverlogon.png){: width="1200" height="600"}
+
+If you look around the dashboard one thing that stood out was an unread notification on the top left. 
+When you click it, a new window pops with. At first you find there's no information disclosure of any sort and it seems irrelevant. That is of course until you look at the URL. .
+
+What stands out? `ID=5` 
+
+![IDOR](idorid.png){: width="1200" height="600"}
+
+This is a case of *Insecure direct object reference* or *IDOR* try changing the number. 
+Eventually you'll find a message from the admin exposing the password needed for ssh login!
+
+![IDOR ssh](idorssh.png){: width="1200" height="600"}
+
+> tim:cm0nt!md0ntf0rg3tth!spa$$w0rdagainlol
+
+After authenticating through SSH we find our first flag!
+
+![flag1](firstflag.png){: width="1200" height="600"}
+
+### Post-Exploitation
+
+One of the first thing I usually do is to check sudo privileges on the user, let's go ahead and do just that.
+
+```bash
+tim@silver-platter:~$ sudo -l
+[sudo] password for tim: 
+Sorry, user tim may not run sudo on silver-platter.
+tim@silver-platter:~$ id
+uid=1001(tim) gid=1001(tim) groups=1001(tim),4(adm)
+```
