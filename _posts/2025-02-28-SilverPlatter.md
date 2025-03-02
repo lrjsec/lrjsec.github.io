@@ -11,7 +11,8 @@ image:
 
 **Silver Platter** is a cool room for exploring web app pentesting using techniques like custom wordlist using cewl to gain access to **Silverpeas**. By then exploiting a vulnerability that allows an authenticated user to read others messages we end up finding **SSH** credentials in one of them.
 
-[![Tryhackme Room Link](room_card.webp){: width="300" height="300" .shadow}](https://tryhackme.com/r/room/silverplatter){: .center }
+{: .center}
+[![Tryhackme Room Link](room_card.webp){: width="300" height="300" .shadow}](https://tryhackme.com/r/room/silverplatter)
 
 ## Enumeration
 
@@ -19,7 +20,7 @@ image:
 
 We start with a `rustscan` / `nmap` scan.
 
-```console
+```bash
 PORT     STATE SERVICE    REASON         VERSION
 22/tcp   open  ssh        syn-ack ttl 61 OpenSSH 8.9p1 Ubuntu 3ubuntu0.4 (Ubuntu Linux; protocol 2.0)
 | ssh-hostkey: 
@@ -66,7 +67,7 @@ There are three open ports:
 
 I first check to see if password authentication is even enabled
 
-```
+```bash
 ┌──(kali㉿kali)-[~/THM/ctfs/SilverPlatter]
 └─$ ssh root@silver.local 
 root@silver.local's password:
@@ -115,3 +116,46 @@ Aha! The demo took us to their login page and it reveals the path needed to acce
 `http://IP:8080/silverpeas/defaultLogin.jsp`
 
 ![IP login](silverurl2.png){: width="1200" height="600"}
+
+Now at this point I will say that I was scratching my head, brute forcing with any password file will be futile.
+It was stated at the beginning that their password policy requires passwords that have NOT been breached.
+
+After some time I thought, maybe theres another hint somewhere in the description. Especially since he took the time to write something we could have found out for ourselves. And after reading it a couple times I noticed the word `cool` was quoted for some reason.  
+
+![Hint](hint.png){: width="1200" height="600"}
+
+Kali comes with a built in tool called cewl which stands for custom word list generator. Here is the description taken from kali's website
+
+{: .note}
+CeWL (Custom Word List generator) is a ruby app which spiders a given URL, up to a specified depth, and returns a list of words which can then be used for password crackers such as John the Ripper. Optionally, CeWL can follow external links.
+
+Now that's cool! (no pun intended lol)
+Let's output the contents to a .txt file and try brute forcing with it!
+
+```bash
+┌──(kali㉿kali)-[~]
+└─$ cewl 10.10.199.249 > silverpass.txt
+```
+
+A lot of you are familiar with burp suite, but 99% you (like me) do not have the pro version, so we are limited in speed. If you have not checked out caido I highly recommend it. It's slick and best of all it won't limit you! And did I mention free?
+
+Let's intercept some traffic and try brute forcing with our new list!
+Go ahead and turn it on and type in a random password with the username we found.
+
+![Login Atmp](login4caido.png){: width="1200" height="600"}
+
+Then send the intercepted traffic to `Automate`
+
+![Caido Auto](caidoauto.png){: width="1200" height="600"}
+
+Mark the password field, here is where the payload will be used.
+
+![Caido Payload](caidopayload.png){: width="1200" height="600"}
+
+And. . . **SUCCESS** we have authentication! 
+
+![Caido Result](caidoresult.png){: width="1200" height="600"}
+
+> scr1ptkiddy:adipiscing
+
+test
