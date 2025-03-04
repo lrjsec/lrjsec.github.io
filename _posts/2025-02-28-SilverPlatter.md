@@ -229,6 +229,7 @@ This command will search recursively through all the logs and searches for the k
 USER=root ; POSTGRES_PASSWORD=_Zd_zx7N823/
 ```
 >tyler:_Zd_zx7N823/
+
 Seems like this user `tyler` has `sudo` access!.
 
 ```bash
