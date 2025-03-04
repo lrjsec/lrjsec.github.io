@@ -186,7 +186,7 @@ If you try changing that number eventually it will lead you to a message from th
 
 > tim:cm0nt!md0ntf0rg3tth!spa$$w0rdagainlol
 
-## SSH & Post-Exploitation
+## SSH & Post-Exploitation:
 
 After authenticating through SSH we find our first flag!
 
