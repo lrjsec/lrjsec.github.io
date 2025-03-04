@@ -98,14 +98,15 @@ How do we access this application?
 
 ### Web 8080
 
-From our rustscan we found it has an open port on `8080` but if we go to `http://10.10.199.249:8080` we see there is nothing there. 
+From our rustscan we found it has an open port on `8080` but if we go to `http://10.10.199.249:8080` we see there is nothing there.  
 Hmmm. . . There must be a way to access the web app through a path but if you do a dirsearch you'll find nothing again. .
 
 Let's look around `https://www.silverpeas.org/` to see if we can find a way in.
 
 ![Silver App](silverhowto.png){: width="1200" height="600"}
 
-I notice right away a button that says **"Find out how to install and configure Silverpeas in Production"** Let's follow that!
+I notice right away a button that says **"Find out how to install and configure Silverpeas in Production"**  
+Let's follow that!
 
 Looking through the page, I noticed a link to a demonstration page which immediately caught my attention.
 
@@ -141,7 +142,8 @@ Let's output the contents to a `.txt` file and try brute forcing with it!
 └─$ cewl 10.10.199.249 > silverpass.txt
 ```
 
-A lot of you are familiar with burp suite, but 99% of you (like me) do not have the pro version, so we are limited in speed. If you have not checked out [Caido](https://caido.io/) I highly recommend it. It's slick and best of all it won't limit you! And did I mention free?
+A lot of you are familiar with burp suite, but 99% of you (like me) do not have the pro version, so we are limited in speed. If you have not checked out [Caido](https://caido.io/) I highly recommend it. It's slick and best of all it won't limit you!  
+And did I mention **free**?
 
 Let's intercept some traffic and try brute forcing with our new list!
 Go ahead and turn it on and type in a random password with the username we found.
@@ -152,7 +154,7 @@ Then send the intercepted traffic to `Automate`
 
 ![Caido Auto](caidoauto.png){: width="1200" height="600"}
 
-Mark the password field. 
+Mark the password field.  
 Here is where the payload will be used.
 
 ![Caido Payload](caidopayload.png){: width="1200" height="600"}
@@ -177,7 +179,7 @@ What stands out? `ID=5`
 
 ![IDOR](idorid.png){: width="1200" height="600"}
 
-This is a case of *Insecure direct object reference* or *IDOR* 
+This is a case of ***Insecure direct object reference*** or ***IDOR***  
 If you try changing that number eventually it will lead you to a message from the admin exposing the password needed for ssh login!
 
 ![IDOR ssh](idorssh.png){: width="1200" height="600"}
@@ -214,21 +216,20 @@ This is where tools like grep are a godsend.
 tim@silver-platter:/var/log$ grep -ir "password"
 ```
 
-The `-i` flag Makes the search case-insensitive, allowing for matches regardless of letter case.
+The `-i` flag Makes the search case-insensitive, allowing for matches regardless of letter case.  
 The `-r` flag recursively searches through directories and all files within them.
 
 This command will search recursively through all the logs and searches for the keyword password. Let's see if we find anything juicy!
 
-Lo' and behold we caught something!
+**Lo' and behold we caught something!**
 
 ![Log Pswd](logpass.png){: width="1200" height="600"}
 
 ```bash
 USER=root ; POSTGRES_PASSWORD=_Zd_zx7N823/
 ```
-
-Seems like this user tyler has sudo and root access!.
 >tyler:_Zd_zx7N823/
+Seems like this user `tyler` has `sudo` access!.
 
 ```bash
 tim@silver-platter:/var/log$ su tyler
@@ -244,6 +245,6 @@ root@silver-platter:~# ls
 root.txt  snap  start_docker_containers.sh
 ```
 
-And there you have it. 
-Seems like we have outsmarted the Hack Smarter Security Team hehe. . 
+And there you have it.  
+Seems like we have **outsmarted** the Hack Smarter Security Team hehe. . 
 
