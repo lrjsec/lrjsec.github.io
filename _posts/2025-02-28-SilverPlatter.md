@@ -14,7 +14,7 @@ image:
 {: center}
 [![Tryhackme Room Link](room_card.webp){: width="300" height="300" .shadow}](https://tryhackme.com/r/room/silverplatter)
 
-## Enumeration
+## Enumeration:
 
 ### Nmap/Rust Scan
 
@@ -77,16 +77,16 @@ Great!, I put that to the side and continue on. . .
 
 ### Web 80
 
-Checking `http://10.10.191.243/`, we find a static site.
+Checking `http://10.10.199.249/`, we find a static site.
 
 ![Web 80 Index](web_80_index.png){: width="1200" height="600"}
 
-I interact with the entire page and a find something interesting
+I interact with the entire page and I find something interesting. . 
 
 ![ID Contact](idcontact.png){: width="1200" height="600"}
 
-We find some information disclosure, something called `Silverpeas` and a username `scr1ptkiddy`
-Let's find out what `Silverpeas` is using the almighty google search!
+Looks like we found some information disclosure, something called `Silverpeas` and a username `scr1ptkiddy`
+Let's find out what `Silverpeas` is by using the almighty google search!
 
 To-Do:
 
@@ -98,33 +98,33 @@ How do we access this application?
 
 ### Web 8080
 
-From our rustscan we found it has an open port on 8080 but if we go to http://IP:8080 we see there is nothing there. 
-Hmmm. . . There must be a way to access the web app through a path but if you do dirsearch you'll find nothing again. .
+From our rustscan we found it has an open port on `8080` but if we go to `http://10.10.199.249:8080` we see there is nothing there. 
+Hmmm. . . There must be a way to access the web app through a path but if you do a dirsearch you'll find nothing again. .
 
-Let's look around https://www.silverpeas.org/ to see if we can find anything.
+Let's look around `https://www.silverpeas.org/` to see if we can find a way in.
 
 ![Silver App](silverhowto.png){: width="1200" height="600"}
 
-I notice a button right away that says "Find out how to install and configure" Let's follow that!
+I notice right away a button that says **"Find out how to install and configure Silverpeas in Production"** Let's follow that!
 
-Looking through the page, this link immediately caught my attention.
+Looking through the page, I noticed a link to a demonstration page which immediately caught my attention.
 
 ![Silver URL](silverurl.png){: width="1200" height="600"}
 
-Aha! The demo took us to their login page and it reveals the path needed to access the application!
+**Aha!** The demo took us to their login page and it reveals the path needed to access the application!
 
 ![Silver Path](silverpath.png){: width="1200" height="600"}
 
-> `http://IP:8080/silverpeas/defaultLogin.jsp`
+> `http://10.10.199.249:8080/silverpeas/defaultLogin.jsp`
 
 ![IP login](silverurl2.png){: width="1200" height="600"}
 
-### Brute Force
+## Brute Force:
 
 Now at this point I will say that I was scratching my head, brute forcing with any password file will be futile.
-It was stated at the beginning that their password policy requires passwords that have NOT been breached.
+It was stated at the beginning that their password policy requires passwords that have **NOT** been breached.
 
-After some time I thought, maybe theres another hint somewhere in the description. Especially since he took the time to write something we could have found out for ourselves. And after reading it a couple times I noticed the word `cool` was quoted for some reason.  
+After some time I thought to myself, maybe there's another hint somewhere in the description. Especially since he took the time to write something we could have found out for ourselves. And after reading it a couple times I noticed the word `cool` was quoted for some reason.  
 
 ![Hint](hint.png){: width="1200" height="600"}
 
@@ -134,14 +134,14 @@ Kali comes with a built in tool called cewl which stands for custom word list ge
 > CeWL (Custom Word List generator) is a ruby app which spiders a given URL, up to a specified depth, and returns a list of words which can then be used for password crackers such as John the Ripper. Optionally, CeWL can follow external links.
 
 Now that's cool! (no pun intended lol)
-Let's output the contents to a .txt file and try brute forcing with it!
+Let's output the contents to a `.txt` file and try brute forcing with it!
 
 ```bash
 ┌──(kali㉿kali)-[~]
 └─$ cewl 10.10.199.249 > silverpass.txt
 ```
 
-A lot of you are familiar with burp suite, but 99% you (like me) do not have the pro version, so we are limited in speed. If you have not checked out caido I highly recommend it. It's slick and best of all it won't limit you! And did I mention free?
+A lot of you are familiar with burp suite, but 99% of you (like me) do not have the pro version, so we are limited in speed. If you have not checked out [Caido](https://caido.io/) I highly recommend it. It's slick and best of all it won't limit you! And did I mention free?
 
 Let's intercept some traffic and try brute forcing with our new list!
 Go ahead and turn it on and type in a random password with the username we found.
@@ -152,7 +152,8 @@ Then send the intercepted traffic to `Automate`
 
 ![Caido Auto](caidoauto.png){: width="1200" height="600"}
 
-Mark the password field, here is where the payload will be used.
+Mark the password field. 
+Here is where the payload will be used.
 
 ![Caido Payload](caidopayload.png){: width="1200" height="600"}
 
@@ -162,31 +163,32 @@ And. . . **SUCCESS** we have authentication!
 
 > scr1ptkiddy:adipiscing
 
-### Silverpeas
+## Silverpeas:
 
 Let's go ahead and login. .
 
 ![DashB](silverlogon.png){: width="1200" height="600"}
 
-If you look around the dashboard one thing that stood out was an unread notification on the top left. 
-When you click it, a new window pops with. At first you find there's no information disclosure of any sort and it seems irrelevant. That is of course until you look at the URL. .
+If you look around the dashboard, one thing that stood out to me was an unread notification on the top left. 
+When you click it, a new window pops up. At first you find there's no information disclosure of any sort and it seems irrelevant. 
+That is of course until you look at the URL. .
 
 What stands out? `ID=5` 
 
 ![IDOR](idorid.png){: width="1200" height="600"}
 
-This is a case of *Insecure direct object reference* or *IDOR* try changing the number. 
-Eventually you'll find a message from the admin exposing the password needed for ssh login!
+This is a case of *Insecure direct object reference* or *IDOR* 
+If you try changing that number eventually it will lead you to a message from the admin exposing the password needed for ssh login!
 
 ![IDOR ssh](idorssh.png){: width="1200" height="600"}
 
 > tim:cm0nt!md0ntf0rg3tth!spa$$w0rdagainlol
 
+## SSH & Post-Exploitation
+
 After authenticating through SSH we find our first flag!
 
 ![flag1](firstflag.png){: width="1200" height="600"}
-
-### Post-Exploitation
 
 One of the first thing I usually do is to check sudo privileges on the user, let's go ahead and do just that.
 
@@ -204,7 +206,7 @@ Let's do a quick google search what this group is all about and what kind of pri
 ![ADM group](admgroupsearch.png){: width="1200" height="600"}
 
 It seems like this group is meant for system monitoring and is allowed to view log files. 
-If you head over to `/var/log` you'll notice right away there's a lot of them, and if you are a good hacker, you are somewhat lazy and don't have time to be checking each file one by one.
+If you head over to `/var/log` you'll notice right away there's a lot of them, and if you are a good hacker, you are somewhat lazy and don't have the time to be checking each file one by one!
 
 This is where tools like grep are a godsend.
 
@@ -242,5 +244,6 @@ root@silver-platter:~# ls
 root.txt  snap  start_docker_containers.sh
 ```
 
-And there you have it. It seems like we have outsmarted the Hack Smarter Security Team hehe. . 
+And there you have it. 
+Seems like we have outsmarted the Hack Smarter Security Team hehe. . 
 
