@@ -163,8 +163,6 @@ And. . . **SUCCESS** we have authentication!
 
 ![Caido Result](caidoresult.png){: width="1200" height="600"}
 
-> scr1ptkiddy:adipiscing
-
 ## Silverpeas:
 
 Let's go ahead and login. .
@@ -183,8 +181,6 @@ This is a case of ***Insecure direct object reference*** or ***IDOR***
 If you try changing that number eventually it will lead you to a message from the admin exposing the password needed for ssh login!
 
 ![IDOR ssh](idorssh.png){: width="1200" height="600"}
-
-> tim:cm0nt!md0ntf0rg3tth!spa$$w0rdagainlol
 
 ## SSH & Post-Exploitation:
 
@@ -225,12 +221,10 @@ This command will search recursively through all the logs and searches for the k
 
 ![Log Pswd](logpass.png){: width="1200" height="600"}
 
-```bash
-USER=root ; POSTGRES_PASSWORD=_Zd_zx7N823/
-```
->tyler:_Zd_zx7N823/
+Let's try to change to the user tyler using `sudo su`  
+Awesome!, the password worked.  
 
-Seems like this user `tyler` has `sudo` access!.
+If we check `id` it seems like this user `tyler` has `sudo` access!.
 
 ```bash
 tim@silver-platter:/var/log$ su tyler
